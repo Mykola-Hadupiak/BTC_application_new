@@ -12,6 +12,7 @@ import axios from 'axios';
 import { Rate } from '@prisma/client';
 import { BTC_API } from './common/constants';
 import { PinoLogger } from 'nestjs-pino';
+import { MetricsService } from 'src/metrics/metrics.service';
 
 interface BTCResponse {
   data: {
@@ -26,6 +27,7 @@ export class RateService {
     private readonly prismaService: PrismaService,
     private readonly nodemailerService: NodemailerService,
     private readonly logger: PinoLogger,
+    private readonly metricsService: MetricsService,
   ) {}
 
   private async getLatestRate(): Promise<Rate> {
@@ -84,6 +86,10 @@ export class RateService {
         subscribedEmails,
       );
 
+    this.metricsService.incrementSendCount(sended.length);
+    this.metricsService.incrementSendErrorCount(errors.length);
+    this.metricsService.setExchangeRate(currentRate);
+
     return [sended, errors];
   }
 
@@ -111,6 +117,10 @@ export class RateService {
         currentRate,
         emailsToSend,
       );
+
+    this.metricsService.incrementSendCount(sended.length);
+    this.metricsService.incrementSendErrorCount(errors.length);
+    this.metricsService.setExchangeRate(currentRate);
 
     return [sended, errors];
   }

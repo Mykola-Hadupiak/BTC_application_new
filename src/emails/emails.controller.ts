@@ -7,10 +7,14 @@ import {
   Post,
 } from '@nestjs/common';
 import { EmailsService } from './emails.service';
+import { MetricsService } from 'src/metrics/metrics.service';
 
 @Controller('emails')
 export class EmailsController {
-  constructor(private readonly emailsService: EmailsService) {}
+  constructor(
+    private readonly emailsService: EmailsService,
+    private readonly metricsService: MetricsService,
+  ) {}
 
   @Get()
   async getAll() {
@@ -26,6 +30,7 @@ export class EmailsController {
     }
 
     await this.emailsService.create(email);
+    this.metricsService.incrementSubscribeCount();
 
     return { message: 'E-mail added' };
   }
@@ -39,6 +44,8 @@ export class EmailsController {
     }
 
     await this.emailsService.remove(email);
+
+    this.metricsService.incrementUnsubscribeCount();
 
     return { message: 'E-mail deleted' };
   }
