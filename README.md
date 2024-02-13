@@ -12,3 +12,4 @@ Previous implementation https://github.com/Mykola-Hadupiak/BTC_application
 6. Also, the logic of nodemailer.service has been changed, and now it is responsible only for itself and does not make queries to the database in order to find emails there (this logic has been moved to rate.service).
 7. A new API for Bitcoin has also been added (since the previous one stopped working).
 8. Added @willsoto/nestjs-prometheus, without default metrics, now it's count: subscribe email, unsubscribe email, send email, send email error, exchange rate.
+9. Added basic Docker logic.
